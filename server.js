@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3010;
-app.listen(PORT, () => {
+app.listen(`0.0.0.0:${PORT}`, () => {
   console.log("Express, Mongoose API listening port: ", PORT);
 });
 
@@ -21,7 +21,7 @@ app.listen(PORT, () => {
  * Database related code
  */
 
-mongoose.connect("mongodb://localhost:27017/MyMovies", {
+mongoose.connect(process.env.DB_URL_PROD, {
   //   useUnifiedTopology: true,
   //   useNewUrlParser: true,
   //   autoIndex: true,
