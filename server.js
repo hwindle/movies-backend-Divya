@@ -27,7 +27,7 @@ app.listen(`0.0.0.0:${PORT}`, () => {
  * Database related code
  */
 
-mongoose.connect(process.env.DB_URL_PROD, {
+mongoose.connect(`${process.env.DB_URL_PROD}`, {
   //   useUnifiedTopology: true,
   //   useNewUrlParser: true,
   //   autoIndex: true,
