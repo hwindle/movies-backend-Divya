@@ -8,18 +8,12 @@ require("dotenv").config();
 // import route handlers
 
 const app = express();
-let corsOptions = {
-  origin: 'http://localhost:3000',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-
-app.use(cors(corsOptions));
-
+app.use(cors());
 // fetch post req.body fields as JSON
 app.use(express.json());
 
 const PORT = process.env.PORT || 3010;
-app.listen(`0.0.0.0:${PORT}`, () => {
+app.listen(PORT, () => {
   console.log("Express, Mongoose API listening port: ", PORT);
 });
 
@@ -27,7 +21,7 @@ app.listen(`0.0.0.0:${PORT}`, () => {
  * Database related code
  */
 
-mongoose.connect(`${process.env.DB_URL_PROD}`, {
+mongoose.connect(process.env.MONGO_URL, {
   //   useUnifiedTopology: true,
   //   useNewUrlParser: true,
   //   autoIndex: true,
@@ -73,6 +67,17 @@ const searchMoviesFromAPI = async (req, res) => {
 const getMovieDetailsFromAPI = async (req, res) => {
   const id = req.query.id;
   const url = `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.API_KEY}&language=en-US`;
+  try {
+    let movieData = await axios.get(url);
+    res.status(200).send(movieData.data);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+};
+
+const getMoviesCastFromAPI = async (req, res) => {
+  const id = req.query.id;
+  const url = `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.API_KEY}&language=en-US`;
   try {
     let movieData = await axios.get(url);
     res.status(200).send(movieData.data);
@@ -141,6 +146,9 @@ app.get("/searchmovies", searchMoviesFromAPI);
 
 ////get movies details from TMDB API based on id
 app.get("/moviedetails", getMovieDetailsFromAPI);
+
+//get movie cast by from api
+app.get("/moviecast", getMoviesCastFromAPI);
 
 //get favourite movies
 app.get("/movies", getMoviesFromDB);
